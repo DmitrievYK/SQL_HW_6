@@ -1,0 +1,58 @@
+-- 1.Создайте функцию, которая принимает кол-во сек и формат их в кол-во дней часов.
+-- Пример: 123456 ->'1 days 10 hours 17 minutes 36 seconds'
+
+-- РЕШЕНИЕ СО ВСЕМИ ВЫВОДАМИ
+DROP FUNCTION IF EXISTS sec_to_dayshour;
+
+DELIMITER //
+CREATE FUNCTION sec_to_dayshour (count_sec BIGINT)
+RETURNS VARCHAR(1000)
+READS SQL DATA
+BEGIN
+	DECLARE days INT;
+    DECLARE hours INT;
+    DECLARE minutes INT;
+    DECLARE seconds INT;
+    DECLARE result VARCHAR(1000);
+    
+    SET days = FLOOR(count_sec / (24*3600));
+    SET count_sec = count_sec - (days * 24 * 3600);
+    
+    SET hours = FLOOR(count_sec / 3600);
+    SET count_sec = count_sec - (hours * 3600);
+    
+    SET minutes = FLOOR(count_sec / 60);
+    SET seconds = count_sec - (minutes * 60);
+    
+RETURN CONCAT(days, ' days ', hours, ' hours ', minutes, ' minutes ', seconds, ' seconds');
+END //
+DELIMITER ;
+
+SELECT sec_to_dayshour(123456);
+-- SELECT sec_to_dayshour(190800);
+
+
+-- 2.Выведите только числа, делящиеся на 15 или 33 в промежутке от 1 до 1000.
+-- Пример: 15,30,33,45...
+DROP FUNCTION IF EXISTS get_number;
+DELIMITER //
+CREATE FUNCTION get_number()
+RETURNS TEXT
+DETERMINISTIC
+BEGIN
+	DECLARE result TEXT;
+    DECLARE i INT DEFAULT 1;
+    SET result = '';
+
+    WHILE i <= 1000 DO
+        IF i % 15 = 0 OR i % 33 = 0 THEN
+            SET result = CONCAT(result, i, ',');
+        END IF;
+        SET i = i + 1;
+    END WHILE;
+
+    RETURN result;
+END//
+DELIMITER ;
+
+SELECT get_number();
